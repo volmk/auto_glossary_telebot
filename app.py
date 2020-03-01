@@ -7,7 +7,7 @@ from glossary import write_glossary, get_form_file
 
 TOKEN = '880907439:AAFnvUJtDKAKmQRAaEkYeUrMVkIkrUHj7ws'
 bot = telebot.TeleBot(TOKEN)
-server = Flask(__name__)
+app = Flask(__name__)
 
 
 @bot.message_handler(commands=['start'])
@@ -23,13 +23,13 @@ def echo_message(message):
     bot.send_message(cid, glossary)
 
 
-@server.route('/' + TOKEN, methods=['POST'])
+@app.route('/' + TOKEN, methods=['POST'])
 def getMessage():
     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
     return "!", 200
 
 
-@server.route("/")
+@app.route("/")
 def webhook():
     bot.remove_webhook()
     bot.set_webhook(url='https:///tranquil-cove-07309.herokuapp.com/' + TOKEN)
@@ -37,4 +37,4 @@ def webhook():
 
 
 if __name__ == "__main__":
-    server.run()
+    app.run()
