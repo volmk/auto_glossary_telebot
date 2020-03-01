@@ -24,6 +24,7 @@ def write_glossary(words_str):
         gloss = get_span(s.translate({' ': '%20'}), ua.ie)
         line = f'{idx + 1}. {s} – {gloss}\n'
         res += line
+    return res
 
 def get_form_file():
     with open(WORDS, 'r+') as f:
