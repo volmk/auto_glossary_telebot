@@ -29,8 +29,11 @@ def echo_message(message):
         line = f'{idx + 1}. {s} – {gloss}\n'
         res += line
         bot.send_chat_action(cid, 'typing')
-        if idx % 10 == 0:
+        if idx+1 % 10 == 0:
             bot.send_message(cid, f'Обработано слов: {idx+1}')
+        if idx+1 % 30 == 0:
+            bot.send_message(cid, res)
+            res = ''
 
     bot.send_message(cid, res)
 
