@@ -1,12 +1,10 @@
-import os
-
 from flask import Flask, request
 from fake_useragent import UserAgent
 
 import telebot
 from glossary import get_span, get_form_file
 
-TOKEN = '880907439:AAFnvUJtDKAKmQRAaEkYeUrMVkIkrUHj7ws'
+TOKEN = '<bot-token>'
 bot = telebot.TeleBot(TOKEN)
 app = Flask(__name__)
 
