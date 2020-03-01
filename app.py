@@ -31,7 +31,7 @@ def echo_message(message):
         bot.send_chat_action(cid, 'typing')
         if idx+1 % 10 == 0:
             bot.send_message(cid, f'Обработано слов: {idx+1}')
-        if idx+1 % 30 == 0:
+        if len(res) > 3500:
             bot.send_message(cid, res)
             res = ''
 
