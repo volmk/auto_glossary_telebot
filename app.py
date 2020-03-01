@@ -22,9 +22,10 @@ def echo_message(message):
     bot.send_chat_action(cid, 'typing')
     ua = UserAgent()
 
-    words_str = message.text
+    words_arr = message.text.split(', ')
+    bot.send_message(cid, f'Получено слов: {len(words_arr)}')
     res = ""
-    for idx, s in enumerate(words_str.split(', ')):
+    for idx, s in enumerate(words_arr):
         gloss = get_span(s.translate({' ': '%20'}), ua.ie)
         line = f'{idx + 1}. {s} – {gloss}\n'
         res += line
