@@ -15,6 +15,7 @@ def start(message):
     bot.send_message(message.chat.id, f'Отправь сообщение вида "<code>{get_form_file()}</code>"', parse_mode='html')
 
 
+
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
     cid = message.chat.id
