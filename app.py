@@ -1,34 +1,40 @@
-import requests
-from bs4 import BeautifulSoup as bs
-from fake_useragent import UserAgent
+import os
 
-WORDS = 't.txt'  # words, separated with comma
-GLOSS = 'gloss.txt'  # glossary
+from flask import Flask, request
 
+import telebot
+from glossary import write_glossary, get_form_file
 
-def get_span(word, user_agent):
-    url = f'https://www.dictionary.com/browse/{word}?s=t'
-    headers = {'User-Agent': user_agent}
-    r = requests.get(url, headers=headers)
-
-    soup = bs(r.content, "html.parser")
-    all_spans = soup.findAll("span", class_="one-click-content")
-    return all_spans[0].text if len(all_spans) else ''
+TOKEN = '880907439:AAFnvUJtDKAKmQRAaEkYeUrMVkIkrUHj7ws'
+bot = telebot.TeleBot(TOKEN)
+server = Flask(__name__)
 
 
-def write_glossary():
-    ua = UserAgent()
-    with open(WORDS, 'r+') as f:
-        string = f.read()
-
-    res = ""
-    for idx, s in enumerate(string.split(', ')):
-        gloss = get_span(s.translate({' ': '%20'}), ua.ie)
-        line = f'{idx + 1}. {s} – {gloss}\n'
-        res += line
-
-    with open(GLOSS, 'w+') as f:
-        f.write(res)
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.send_message(message.chat.id, f'Отправь сообщение вида "{get_form_file()}"')
 
 
-write_glossary()
+@bot.message_handler(func=lambda message: True, content_types=['text'])
+def echo_message(message):
+    cid = message.chat.id
+    bot.send_chat_action(cid, 'typing')
+    glossary = write_glossary(message.str)
+    bot.send_message(cid, glossary)
+
+
+@server.route('/' + TOKEN, methods=['POST'])
+def getMessage():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "!", 200
+
+
+@server.route("/")
+def webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url='https:///tranquil-cove-07309.herokuapp.com/' + TOKEN)
+    return "!", 200
+
+
+if __name__ == "__main__":
+    server.run()
