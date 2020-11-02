@@ -128,7 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-modules/local.py
 
 .idea
 local.py
