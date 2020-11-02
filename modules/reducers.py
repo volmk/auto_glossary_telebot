@@ -1,4 +1,3 @@
-
 import requests
 from bs4 import BeautifulSoup as bs
 
@@ -53,4 +52,11 @@ class Reducers:
                 except AttributeError:
                     pass
 
+        return meaning, example
+
+    @staticmethod
+    def default(word, user_agent):
+        meaning, example = Reducers.dictionary_cambridge_org(word, user_agent)
+        if not meaning:
+            meaning, example = Reducers.dictionary_com(word, user_agent)
         return meaning, example
