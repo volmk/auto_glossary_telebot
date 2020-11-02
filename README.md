@@ -1,5 +1,6 @@
-#Auto glossary bot
-Телеграм бот, який отримує повідомлення виду 
+# Auto glossary bot
+
+[Телеграм бот](htts://t.me/auto_glossary_bot), який отримує повідомлення виду 
 ```
 application, arbitrary, artificial intelligence, binding, capability, cited, client-server 
 connection, crucial, cryptography, database, daunting, demand, determine, devote, diminished, 
