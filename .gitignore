@@ -131,3 +131,4 @@ dmypy.json
 modules/local.py
 
 .idea
+config.py

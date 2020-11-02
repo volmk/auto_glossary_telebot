@@ -1,52 +1,21 @@
 from flask import Flask, request
-from fake_useragent import UserAgent
 
-import telebot
-from glossary import get_span, get_form_file
+from config import WEBHOOK_URL, TELEGRAM_TOKEN
 
-TOKEN = '<bot-token>'
-bot = telebot.TeleBot(TOKEN)
+from modules.bot import BotConfig
+
 app = Flask(__name__)
 
 
-@bot.message_handler(commands=['start'])
-def start(message):
-    bot.send_message(message.chat.id, f'Отправь сообщение вида "<code>{get_form_file()}</code>"', parse_mode='html')
-
-
-@bot.message_handler(func=lambda message: True, content_types=['text'])
-def echo_message(message):
-    cid = message.chat.id
-    bot.send_chat_action(cid, 'typing')
-    ua = UserAgent()
-
-    words_arr = message.text.split(', ')
-    bot.send_message(cid, f'Получено слов: {len(words_arr)}')
-    res = ""
-    for idx, s in enumerate(words_arr):
-        gloss = get_span(s.translate({' ': '%20'}), ua.ie)
-        line = f'{idx + 1}. {s} – {gloss}\n'
-        res += line
-        bot.send_chat_action(cid, 'typing')
-        if idx+1 % 10 == 0:
-            bot.send_message(cid, f'Обработано слов: {idx+1}')
-        if len(res) > 3500:
-            bot.send_message(cid, res)
-            res = ''
-
-    bot.send_message(cid, res)
-
-
-@app.route('/' + TOKEN, methods=['POST'])
+@app.route('/' + TELEGRAM_TOKEN, methods=['POST'])
 def getMessage():
-    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    BotConfig.process_updates(request.stream.read().decode("utf-8"))
     return "!", 200
 
 
 @app.route("/")
 def webhook():
-    bot.remove_webhook()
-    bot.set_webhook(url='https://tranquil-cove-07309.herokuapp.com/' + TOKEN)
+    BotConfig.set_webhook(WEBHOOK_URL + '/' + TELEGRAM_TOKEN)
     return "!", 200
 
 
