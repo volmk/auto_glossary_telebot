@@ -55,7 +55,7 @@ class Reducers:
         return meaning, example
 
     @staticmethod
-    def default(word, user_agent):
+    def create(word, user_agent):
         meaning, example = Reducers.dictionary_cambridge_org(word, user_agent)
         if not meaning:
             meaning, example = Reducers.dictionary_com(word, user_agent)

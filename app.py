@@ -1,21 +1,28 @@
 from flask import Flask, request
 
-from config import WEBHOOK_URL, TELEGRAM_TOKEN
-
 from modules.bot import BotConfig
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
+token = os.getenv('TELEGRAM_TOKEN')
+webhook_url = os.getenv('WEBHOOK')
+port = os.getenv('PORT')
 
-@app.route('/' + TELEGRAM_TOKEN, methods=['POST'])
+
+@app.route('/' + token, methods=['POST'])
 def getMessage():
     BotConfig.process_updates(request.stream.read().decode("utf-8"))
     return "!", 200
 
 
 @app.route("/")
-def webhook():
-    BotConfig.set_webhook(WEBHOOK_URL + '/' + TELEGRAM_TOKEN)
+def set_webhook():
+    BotConfig.set_webhook(webhook_url + '/' + token)
     return "!", 200
 
 

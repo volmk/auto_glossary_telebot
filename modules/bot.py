@@ -1,49 +1,37 @@
-from config import TELEGRAM_TOKEN
 import telebot
 
 from modules.glossary import Glossary
 from modules.reducers import Reducers
 
-_bot = telebot.TeleBot(TELEGRAM_TOKEN)
+import os
 
-start_message = 'Відправ слова. Вони мають бути розділені комою з пробілом. Слова сортуються автоматично\n' \
-                'Доступні команди:\n/start\n/camb\n/dict\n' \
-                'Для пошуку на обох сайтах просто відправ слова'
+from dotenv import load_dotenv
+
+load_dotenv()
+token = os.getenv('TELEGRAM_TOKEN')
+
+_bot = telebot.TeleBot(token)
+
+start_msg = 'Доступні команди:\n/en\n' \
+            'Але ми працюємо над покращенням :)'
 
 
-@_bot.message_handler(commands=['start'])
-def start(message):
-    _bot.send_message(message.chat.id, start_message, parse_mode='html', disable_web_page_preview=True)
-
-
-@_bot.message_handler(commands=['camb'])
-def camb(message):
-    text = message.text[5:]
+@_bot.message_handler(commands=['en'])
+def en(message):
+    text = message.text[3:]
     if not text:
-        _bot.send_message(message.chat.id, 'Відправ повідомлення типу <code>'
-                                           '\n/camb first, second, third\n'
-                                           '</code> для пошуку на сайті https://dictionary.cambridge.org/',
+        _bot.send_message(message.chat.id,
+                          'Для пошуку англійських слів відправ повідомлення типу\n'
+                          '<code>/en first, second, third</code>\n'
+                          'Вони обов\'язково мають бути розділені комою з пробілом',
                           parse_mode='html', disable_web_page_preview=True)
     else:
-        send_dict(message, text, Reducers.dictionary_cambridge_org, 'Пошук на сайті https://dictionary.cambridge.org/')
-
-
-@_bot.message_handler(commands=['dict'])
-def dict(message):
-    text = message.text[5:]
-    if not text:
-        _bot.send_message(message.chat.id, 'Відправ повідомлення типу <code>'
-                                           '\n/dict first, second, third\n'
-                                           '</code> для пошуку на сайті https://www.dictionary.com/',
-                          parse_mode='html', disable_web_page_preview=True)
-    else:
-        send_dict(message, text, Reducers.dictionary_com, 'Пошук на сайті https://dictionary.com/')
+        send_dict(message, text, Reducers.create, 'Пошук англійських слів')
 
 
 @_bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
-    send_dict(message, message.text, Reducers.default,
-              'Пошук на сайтах https://dictionary.cambridge.org/ та https://dictionary.com/')
+    _bot.send_message(message.chat.id, start_msg, parse_mode='html')
 
 
 def send_dict(message, words_str, reducer, first_msg):
@@ -76,7 +64,7 @@ def send_dict(message, words_str, reducer, first_msg):
             res = ''
 
     _bot.send_message(cid, res, parse_mode='html')
-    _bot.send_message(cid, start_message)
+    _bot.send_message(cid, start_msg)
 
 
 class BotConfig:

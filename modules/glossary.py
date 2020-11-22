@@ -36,7 +36,3 @@ class Glossary:
     def test(self, word):
         return self.reducer(word)
 
-#
-# g = Glossary(Reducers.dictionary_cambridge_org)
-#
-# print(g.create_html('vocabulary', 1))
