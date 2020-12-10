@@ -9,21 +9,25 @@ load_dotenv()
 
 app = Flask(__name__)
 
-token = os.getenv('TELEGRAM_TOKEN')
-webhook_url = os.getenv('WEBHOOK')
-port = os.getenv('PORT')
+TOKEN = os.getenv('TELEGRAM_TOKEN')
+WEBHOOK = os.getenv('WEBHOOK')
 
 
-@app.route('/' + token, methods=['POST'])
-def getMessage():
+@app.route('/' + TOKEN, methods=['POST'])
+def botmsg():
     BotConfig.process_updates(request.stream.read().decode("utf-8"))
     return "!", 200
 
 
-@app.route("/")
-def set_webhook():
-    BotConfig.set_webhook(webhook_url + '/' + token)
+@app.route("/wakeup")
+def wakeup():
     return "!", 200
+
+
+@app.route("/sethook")
+def sethook():
+    BotConfig.set_webhook(WEBHOOK + '/' + TOKEN)
+    return "changed", 200
 
 
 if __name__ == "__main__":
