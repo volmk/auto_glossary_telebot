@@ -10,7 +10,8 @@ load_dotenv()
 app = Flask(__name__)
 
 TOKEN = os.getenv('TELEGRAM_TOKEN')
-WEBHOOK = os.getenv('WEBHOOK')
+WEBHOOK_URL = os.getenv('WEBHOOK_URL')
+DEV_MODE = os.getenv('DEV_MODE')
 
 
 @app.route('/' + TOKEN, methods=['POST'])
@@ -26,7 +27,7 @@ def wakeup():
 
 @app.route("/sethook")
 def sethook():
-    BotConfig.set_webhook(WEBHOOK + '/' + TOKEN)
+    BotConfig.set_webhook(WEBHOOK_URL + '/' + TOKEN)
     return "changed", 200
 
 
